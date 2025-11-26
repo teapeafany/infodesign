@@ -1,0 +1,453 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', 'Arial', sans-serif;
+    background-color: #f2ede9;
+    min-height: 100vh;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.container {
+    max-width: 1920px;
+    margin: 0 auto;
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Timeline */
+.timeline {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 40px;
+    margin-bottom: 20px;
+    position: relative;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.timeline-item {
+    font-size: 16px;
+    font-weight: normal;
+    color: #000;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    padding: 5px 10px;
+    border-radius: 5px;
+    position: relative;
+    opacity: 0.3;
+}
+
+.timeline-item:hover {
+    opacity: 0.6;
+}
+
+.timeline-item.active {
+    opacity: 1;
+    font-weight: normal;
+}
+
+/* Main content area */
+.main-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 100px);
+    max-width: 1920px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+/* Kaldis Center Image */
+.kaldis-container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(620px, 32vw);
+    height: auto;
+    aspect-ratio: 620 / 428;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 620px;
+}
+
+.kaldis-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Temperature Icons Arc */
+.temperature-icons-arc {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.temp-icon {
+    position: absolute;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    pointer-events: all;
+    transition: opacity 0.7s ease;
+    opacity: 0.2;
+    transform: translate(-50%, -50%);
+}
+
+.temp-icon.size-70 {
+    width: 70px;
+    height: 70px;
+}
+
+.temp-icon.size-90 {
+    width: 90px;
+    height: 90px;
+}
+
+.temp-icon.size-75 {
+    width: 75px;
+    height: 75px;
+}
+
+.temp-icon.yellow {
+    background-color: #FFD426;
+}
+
+.temp-icon.peach {
+    background-color: #FF8C42;
+}
+
+.temp-icon.orange {
+    background-color: #FFA500;
+}
+
+.temp-icon-inner {
+    width: 50%;
+    height: 50%;
+    border-radius: 50%;
+    background-color: transparent;
+    position: relative;
+    opacity: 0.3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Sun icon for yellow and peach */
+.temp-icon.yellow .temp-icon-inner::before,
+.temp-icon.peach .temp-icon-inner::before {
+    content: '';
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 45 45'%3E%3Cpath d='M22.5 3.75V7.5' stroke='white' stroke-width='3.75' stroke-linecap='round'/%3E%3Cpath d='M22.5 37.5V41.25' stroke='white' stroke-width='3.75' stroke-linecap='round'/%3E%3Cpath d='M3.75 22.5H7.5' stroke='white' stroke-width='3.75' stroke-linecap='round'/%3E%3Cpath d='M37.5 22.5H41.25' stroke='white' stroke-width='3.75' stroke-linecap='round'/%3E%3Cpath d='M8.5 8.5L11 11' stroke='white' stroke-width='3.75' stroke-linecap='round'/%3E%3Cpath d='M34 34L36.5 36.5' stroke='white' stroke-width='3.75' stroke-linecap='round'/%3E%3Cpath d='M36.5 8.5L34 11' stroke='white' stroke-width='3.75' stroke-linecap='round'/%3E%3Cpath d='M11 34L8.5 36.5' stroke='white' stroke-width='3.75' stroke-linecap='round'/%3E%3Ccircle cx='22.5' cy='22.5' r='3.75' fill='white'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: block;
+}
+
+/* Arrow icon for orange */
+.temp-icon.orange .temp-icon-inner::before {
+    content: '';
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 35 35'%3E%3Cpath d='M17.5 2.91667V14.5833' stroke='white' stroke-width='2.91667' stroke-linecap='round'/%3E%3Cpath d='M17.5 14.5833L26.25 23.3333' stroke='white' stroke-width='2.91667' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M17.5 14.5833L8.75 23.3333' stroke='white' stroke-width='2.91667' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M2.91667 26.25H5.83333' stroke='white' stroke-width='2.91667' stroke-linecap='round'/%3E%3Cpath d='M29.1667 26.25H32.0833' stroke='white' stroke-width='2.91667' stroke-linecap='round'/%3E%3Cpath d='M32.0833 32.0833H2.91667' stroke='white' stroke-width='2.91667' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: block;
+}
+
+.temp-icon:hover {
+    opacity: 0.6 !important;
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+.temp-icon.active {
+    opacity: 1 !important;
+}
+
+/* Arc positioning based on reference code - centered on kaldis, responsive */
+/* Arc shifted left so 2pm sun is centered under 2pm time */
+.temp-icon[data-time="10"] {
+    left: calc(50% - min(485px, 25.3vw));
+    top: calc(50% + min(81px, 7.5vh));
+}
+
+.temp-icon[data-time="11"] {
+    left: calc(50% - min(415px, 21.6vw));
+    top: calc(50% - min(49px, 4.5vh));
+}
+
+.temp-icon[data-time="12"] {
+    left: calc(50% - min(323px, 16.8vw));
+    top: calc(50% - min(182px, 16.8vh));
+}
+
+.temp-icon[data-time="13"] {
+    left: calc(50% - min(195px, 10.2vw));
+    top: calc(50% - min(273px, 25.3vh));
+}
+
+.temp-icon[data-time="14"] {
+    left: calc(50% - min(32px, 1.7vw));
+    top: calc(50% - min(326px, 30.2vh));
+}
+
+.temp-icon[data-time="15"] {
+    left: calc(50% + min(133px, 6.9vw));
+    top: calc(50% - min(268px, 24.8vh));
+}
+
+.temp-icon[data-time="16"] {
+    left: calc(50% + min(262px, 13.6vw));
+    top: calc(50% - min(178px, 16.5vh));
+}
+
+.temp-icon[data-time="17"] {
+    left: calc(50% + min(379px, 19.7vw));
+    top: calc(50% - min(56px, 5.2vh));
+}
+
+.temp-icon[data-time="18"] {
+    left: calc(50% + min(454px, 23.6vw));
+    top: calc(50% + min(69px, 6.4vh));
+}
+
+/* Coffee machine */
+.coffee-machine {
+    position: absolute;
+    top: 5%;
+    left: 10%;
+    width: min(300px, 15.6vw);
+    height: auto;
+    aspect-ratio: 300 / 325;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    opacity: 0.22;
+    z-index: 0;
+    max-width: 300px;
+}
+
+.coffee-machine:hover {
+    transform: scale(1.05);
+    opacity: 0.4;
+}
+
+.coffee-machine img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.steam {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 40px;
+    opacity: 0.7;
+    animation: steam-rise 3s infinite;
+}
+
+@keyframes steam-rise {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(0);
+    }
+    50% {
+        opacity: 0.7;
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+}
+
+/* Sound waves */
+.sound-waves {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(620px, 32vw);
+    height: auto;
+    aspect-ratio: 620 / 428;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    z-index: 0;
+    pointer-events: all;
+    max-width: 620px;
+}
+
+.sound-waves:hover {
+    transform: scale(1.02);
+}
+
+.sound-waves img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* People */
+.people-group {
+    position: absolute;
+    bottom: 15%;
+    right: 8%;
+    width: min(400px, 20.8vw);
+    height: auto;
+    aspect-ratio: 400 / 265;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    z-index: 0;
+    max-width: 400px;
+}
+
+.people-group:hover {
+    transform: scale(1.05);
+}
+
+.people-group img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Info panel */
+.info-panel {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 15px 25px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    display: none;
+    z-index: 1000;
+    max-width: 400px;
+    text-align: center;
+}
+
+.info-panel.show {
+    display: block;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* Responsive adjustments for 1920x1080 and smaller */
+@media (max-width: 1920px) {
+    .main-content {
+        height: calc(100vh - 100px);
+    }
+    
+    /* Ensure all elements fit within viewport */
+    .temp-icon.size-70 {
+        width: min(70px, 3.6vw);
+        height: min(70px, 3.6vw);
+    }
+
+    .temp-icon.size-90 {
+        width: min(90px, 4.7vw);
+        height: min(90px, 4.7vw);
+    }
+
+    .temp-icon.size-75 {
+        width: min(75px, 3.9vw);
+        height: min(75px, 3.9vw);
+    }
+}
+
+@media (max-width: 1400px) {
+    .kaldis-container {
+        width: min(500px, 35vw);
+    }
+
+    .temp-icon[data-time="10"],
+    .temp-icon[data-time="11"],
+    .temp-icon[data-time="12"],
+    .temp-icon[data-time="13"],
+    .temp-icon[data-time="14"],
+    .temp-icon[data-time="15"],
+    .temp-icon[data-time="16"],
+    .temp-icon[data-time="17"],
+    .temp-icon[data-time="18"] {
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+
+    .coffee-machine {
+        width: min(250px, 18vw);
+    }
+
+    .sound-waves {
+        width: min(500px, 35vw);
+    }
+
+    .people-group {
+        width: min(350px, 25vw);
+    }
+}
+
+@media (max-width: 768px) {
+    .kaldis-container {
+        width: 90%;
+    }
+
+    .timeline {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 15px 20px;
+    }
+
+    .coffee-machine,
+    .people-group,
+    .sound-waves {
+        width: min(200px, 30vw);
+    }
+    
+    .temp-icon[data-time="10"],
+    .temp-icon[data-time="11"],
+    .temp-icon[data-time="12"],
+    .temp-icon[data-time="13"],
+    .temp-icon[data-time="14"],
+    .temp-icon[data-time="15"],
+    .temp-icon[data-time="16"],
+    .temp-icon[data-time="17"],
+    .temp-icon[data-time="18"] {
+        transform: translate(-50%, -50%) scale(0.6);
+    }
+}

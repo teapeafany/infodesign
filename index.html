@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CULC Floor 2 - Interactive</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Timeline -->
+        <div class="timeline">
+            <div class="timeline-item" data-time="10" data-time-label="10am">10am</div>
+            <div class="timeline-item" data-time="11" data-time-label="11am">11am</div>
+            <div class="timeline-item active" data-time="12" data-time-label="12pm">12pm</div>
+            <div class="timeline-item" data-time="13" data-time-label="1pm">1pm</div>
+            <div class="timeline-item" data-time="14" data-time-label="2pm">2pm</div>
+            <div class="timeline-item" data-time="15" data-time-label="3pm">3pm</div>
+            <div class="timeline-item" data-time="16" data-time-label="4pm">4pm</div>
+            <div class="timeline-item" data-time="17" data-time-label="5pm">5pm</div>
+            <div class="timeline-item" data-time="18" data-time-label="6pm">6pm</div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Coffee Machine -->
+            <div class="coffee-machine" data-info="Fresh coffee available at Kaldis!">
+                <div class="steam"></div>
+                <img src="images/coffee machines.png" alt="Coffee Machine">
+            </div>
+
+            <!-- Kaldis Center Image -->
+            <div class="kaldis-container">
+                <img src="images/kaldis.png" alt="Kaldis" class="kaldis-image">
+            </div>
+
+            <!-- Temperature Icons arranged in arc -->
+            <div class="temperature-icons-arc">
+                <!-- 10am - Orange -->
+                <div class="temp-icon orange size-70" data-time="10" data-info="Temperature at 10am">
+                    <div class="temp-icon-inner"></div>
+                </div>
+                <!-- 11am - Orange -->
+                <div class="temp-icon orange size-70" data-time="11" data-info="Temperature at 11am">
+                    <div class="temp-icon-inner"></div>
+                </div>
+                <!-- 12pm - Yellow -->
+                <div class="temp-icon yellow size-90" data-time="12" data-info="Comfortable temperature at 12pm">
+                    <div class="temp-icon-inner"></div>
+                </div>
+                <!-- 1pm - Yellow -->
+                <div class="temp-icon yellow size-90" data-time="13" data-info="Comfortable temperature at 1pm">
+                    <div class="temp-icon-inner"></div>
+                </div>
+                <!-- 2pm - Yellow -->
+                <div class="temp-icon yellow size-90" data-time="14" data-info="Comfortable temperature at 2pm">
+                    <div class="temp-icon-inner"></div>
+                </div>
+                <!-- 3pm - Yellow -->
+                <div class="temp-icon yellow size-90" data-time="15" data-info="Comfortable temperature at 3pm">
+                    <div class="temp-icon-inner"></div>
+                </div>
+                <!-- 4pm - Yellow -->
+                <div class="temp-icon yellow size-90" data-time="16" data-info="Comfortable temperature at 4pm">
+                    <div class="temp-icon-inner"></div>
+                </div>
+                <!-- 5pm - Peach -->
+                <div class="temp-icon peach size-75" data-time="17" data-info="Moderate temperature at 5pm">
+                    <div class="temp-icon-inner"></div>
+                </div>
+                <!-- 6pm - Peach -->
+                <div class="temp-icon peach size-75" data-time="18" data-info="Moderate temperature at 6pm">
+                    <div class="temp-icon-inner"></div>
+                </div>
+            </div>
+
+            <!-- Sound Waves -->
+            <div class="sound-waves" data-info="Ambient sound levels">
+                <img src="images/sound.png" alt="Sound Waves">
+            </div>
+
+            <!-- People Group -->
+            <div class="people-group" data-info="Active study area with people">
+                <img src="images/speaking.png" alt="People">
+            </div>
+        </div>
+
+        <!-- Info Panel -->
+        <div class="info-panel" id="infoPanel">
+            <p id="infoText"></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
