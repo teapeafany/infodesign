@@ -22,13 +22,57 @@ body {
     overflow: hidden;
 }
 
+/* Location Selector */
+.location-selector {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 40px 3px 40px;
+    margin-bottom: 0;
+    position: relative;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.location-item {
+    font-size: 16px;
+    font-weight: normal;
+    color: #000;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    padding: 5px 10px;
+    border-radius: 5px;
+    position: relative;
+    opacity: 0.3;
+    flex-shrink: 0;
+    min-width: fit-content;
+}
+
+.location-item:hover {
+    opacity: 0.6;
+}
+
+.location-item.active {
+    opacity: 1;
+    font-weight: normal;
+}
+
+.location-separator {
+    font-size: 16px;
+    color: #000;
+    opacity: 0.3;
+    padding: 0 5px;
+}
+
 /* Timeline */
 .timeline {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px 40px;
-    margin-bottom: 20px;
+    padding: 3px 40px;
+    margin-bottom: 0;
+    margin-top: 0;
     position: relative;
     gap: 10px;
     width: 100%;
@@ -45,6 +89,8 @@ body {
     border-radius: 5px;
     position: relative;
     opacity: 0.3;
+    flex-shrink: 0;
+    min-width: fit-content;
 }
 
 .timeline-item:hover {
@@ -91,20 +137,27 @@ body {
     object-fit: contain;
 }
 
-/* Temperature Icons Arc */
+/* Temperature Icons - Straight Line */
 .temperature-icons-arc {
     position: absolute;
     left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 0;
-    height: 0;
+    top: 90px;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 1920px;
+    height: 90px;
     pointer-events: none;
     z-index: 3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 3px 40px 0 40px;
+    box-sizing: border-box;
 }
 
 .temp-icon {
-    position: absolute;
+    position: relative;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -113,22 +166,23 @@ body {
     pointer-events: all;
     transition: opacity 0.7s ease;
     opacity: 0.2;
-    transform: translate(-50%, -50%);
+    flex-shrink: 0;
+    margin: 0;
 }
 
 .temp-icon.size-70 {
-    width: 70px;
-    height: 70px;
+    width: 40px;
+    height: 40px;
 }
 
 .temp-icon.size-90 {
-    width: 90px;
-    height: 90px;
+    width: 55px;
+    height: 55px;
 }
 
 .temp-icon.size-75 {
-    width: 75px;
-    height: 75px;
+    width: 45px;
+    height: 45px;
 }
 
 .temp-icon.yellow {
@@ -182,58 +236,28 @@ body {
 
 .temp-icon:hover {
     opacity: 0.6 !important;
-    transform: translate(-50%, -50%) scale(1.1);
+    transform: scale(1.1);
 }
 
 .temp-icon.active {
     opacity: 1 !important;
 }
 
-/* Arc positioning based on reference code - centered on kaldis, responsive */
-/* Arc shifted left so 2pm sun is centered under 2pm time */
-.temp-icon[data-time="10"] {
-    left: calc(50% - min(485px, 25.3vw));
-    top: calc(50% + min(81px, 7.5vh));
-}
-
-.temp-icon[data-time="11"] {
-    left: calc(50% - min(415px, 21.6vw));
-    top: calc(50% - min(49px, 4.5vh));
-}
-
-.temp-icon[data-time="12"] {
-    left: calc(50% - min(323px, 16.8vw));
-    top: calc(50% - min(182px, 16.8vh));
-}
-
-.temp-icon[data-time="13"] {
-    left: calc(50% - min(195px, 10.2vw));
-    top: calc(50% - min(273px, 25.3vh));
-}
-
-.temp-icon[data-time="14"] {
-    left: calc(50% - min(32px, 1.7vw));
-    top: calc(50% - min(326px, 30.2vh));
-}
-
-.temp-icon[data-time="15"] {
-    left: calc(50% + min(133px, 6.9vw));
-    top: calc(50% - min(268px, 24.8vh));
-}
-
-.temp-icon[data-time="16"] {
-    left: calc(50% + min(262px, 13.6vw));
-    top: calc(50% - min(178px, 16.5vh));
-}
-
-.temp-icon[data-time="17"] {
-    left: calc(50% + min(379px, 19.7vw));
-    top: calc(50% - min(56px, 5.2vh));
-}
-
+/* Straight line positioning - aligned with timeline */
+/* Icons are positioned using flexbox, evenly spaced */
+.temp-icon[data-time="10"],
+.temp-icon[data-time="11"],
+.temp-icon[data-time="12"],
+.temp-icon[data-time="13"],
+.temp-icon[data-time="14"],
+.temp-icon[data-time="15"],
+.temp-icon[data-time="16"],
+.temp-icon[data-time="17"],
 .temp-icon[data-time="18"] {
-    left: calc(50% + min(454px, 23.6vw));
-    top: calc(50% + min(69px, 6.4vh));
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
 }
 
 /* Coffee machine */
@@ -245,21 +269,65 @@ body {
     height: auto;
     aspect-ratio: 300 / 325;
     cursor: pointer;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.5s ease;
     opacity: 0.22;
     z-index: 0;
     max-width: 300px;
 }
 
-.coffee-machine:hover {
-    transform: scale(1.05);
-    opacity: 0.4;
-}
+/* Coffee machine hover disabled - animation plays automatically at 12pm */
 
 .coffee-machine img {
     width: 100%;
     height: 100%;
     object-fit: contain;
+}
+
+/* Coffee animation frames - stacked on top of each other */
+.coffee-frame {
+    transition: opacity 0.1s ease;
+    pointer-events: none;
+}
+
+.coffee-frame.active {
+    transition: opacity 0s ease;
+}
+
+.coffee-frame-1 {
+    /* Keep coffee1 at original scale within coffee-machine container */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 1;
+    z-index: 0;
+}
+
+.coffee-frame-2,
+.coffee-frame-3,
+.coffee-frame-4,
+.coffee-frame-5,
+.coffee-frame-6 {
+    /* Scale coffee2-6 to cover the entire page */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    opacity: 0;
+    z-index: 5;
+}
+
+.coffee-frame-2.active,
+.coffee-frame-3.active,
+.coffee-frame-4.active,
+.coffee-frame-5.active,
+.coffee-frame-6.active {
+    opacity: 1 !important;
+    z-index: 6;
 }
 
 .steam {
@@ -322,9 +390,10 @@ body {
     height: auto;
     aspect-ratio: 400 / 265;
     cursor: pointer;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.5s ease;
     z-index: 0;
     max-width: 400px;
+    opacity: 1;
 }
 
 .people-group:hover {
@@ -377,18 +446,18 @@ body {
     
     /* Ensure all elements fit within viewport */
     .temp-icon.size-70 {
-        width: min(70px, 3.6vw);
-        height: min(70px, 3.6vw);
+        width: min(40px, 2.1vw);
+        height: min(40px, 2.1vw);
     }
 
     .temp-icon.size-90 {
-        width: min(90px, 4.7vw);
-        height: min(90px, 4.7vw);
+        width: min(55px, 2.9vw);
+        height: min(55px, 2.9vw);
     }
 
     .temp-icon.size-75 {
-        width: min(75px, 3.9vw);
-        height: min(75px, 3.9vw);
+        width: min(45px, 2.3vw);
+        height: min(45px, 2.3vw);
     }
 }
 
@@ -406,7 +475,7 @@ body {
     .temp-icon[data-time="16"],
     .temp-icon[data-time="17"],
     .temp-icon[data-time="18"] {
-        transform: translate(-50%, -50%) scale(0.8);
+        transform: scale(0.8);
     }
 
     .coffee-machine {
@@ -425,6 +494,12 @@ body {
 @media (max-width: 768px) {
     .kaldis-container {
         width: 90%;
+    }
+
+    .location-selector {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 15px 20px;
     }
 
     .timeline {
@@ -448,6 +523,6 @@ body {
     .temp-icon[data-time="16"],
     .temp-icon[data-time="17"],
     .temp-icon[data-time="18"] {
-        transform: translate(-50%, -50%) scale(0.6);
+        transform: scale(0.6);
     }
 }

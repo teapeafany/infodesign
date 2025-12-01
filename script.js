@@ -1,5 +1,125 @@
 // Initialize selected time (12pm = 12)
 let selectedTime = 12;
+let selectedLocation = 'Kaldis';
+
+// Coffee animation variables
+let coffeeAnimationFrame = 1;
+let coffeeAnimationInterval = null;
+const coffeeFrames = 6; // coffee1.png through coffee6.png
+const coffeeAnimationSpeed = 200; // milliseconds per frame
+
+// Coffee animation loop
+function startCoffeeAnimation() {
+    // Clear any existing interval
+    if (coffeeAnimationInterval) {
+        clearInterval(coffeeAnimationInterval);
+    }
+    
+    // Reset to frame 1
+    coffeeAnimationFrame = 1;
+    
+    // Clear all frames except coffee1
+    for (let i = 2; i <= coffeeFrames; i++) {
+        const frame = document.getElementById(`coffeeFrame${i}`);
+        if (frame) {
+            frame.classList.remove('active');
+            // Force immediate opacity update
+            frame.style.opacity = '0';
+        }
+    }
+    
+    // Start animation loop - show first frame immediately
+    const showNextFrame = () => {
+        coffeeAnimationFrame++;
+        
+        // If we've reached the last frame, reset everything
+        if (coffeeAnimationFrame > coffeeFrames) {
+            // Remove active class from all frames 2-6
+            for (let i = 2; i <= coffeeFrames; i++) {
+                const frame = document.getElementById(`coffeeFrame${i}`);
+                if (frame) {
+                    frame.classList.remove('active');
+                    frame.style.opacity = '0';
+                }
+            }
+            // Reset to frame 1
+            coffeeAnimationFrame = 1;
+        } else {
+            // Add active class to current frame (layers accumulate)
+            const currentFrame = document.getElementById(`coffeeFrame${coffeeAnimationFrame}`);
+            if (currentFrame) {
+                currentFrame.classList.add('active');
+                // Force immediate opacity update
+                currentFrame.style.opacity = '1';
+            }
+        }
+    };
+    
+    // Show first frame (frame 2) immediately
+    showNextFrame();
+    
+    // Then continue with interval
+    coffeeAnimationInterval = setInterval(showNextFrame, coffeeAnimationSpeed);
+}
+
+function stopCoffeeAnimation() {
+    if (coffeeAnimationInterval) {
+        clearInterval(coffeeAnimationInterval);
+        coffeeAnimationInterval = null;
+    }
+    // Reset to first frame - show only coffee1
+    for (let i = 1; i <= coffeeFrames; i++) {
+        const frame = document.getElementById(`coffeeFrame${i}`);
+        if (frame) {
+            frame.classList.remove('active');
+        }
+    }
+    // Coffee1 is always visible (opacity: 1 by default)
+    coffeeAnimationFrame = 1;
+}
+
+// Update coffee animation and people opacity based on time and location
+function updateTimeBasedElements() {
+    const peopleGroup = document.querySelector('.people-group');
+    const coffeeMachine = document.querySelector('.coffee-machine');
+    
+    if (selectedTime === 12 && selectedLocation === 'Kaldis') {
+        // At 12pm with Kaldis selected: show coffee animation, lower people opacity
+        startCoffeeAnimation();
+        if (peopleGroup) {
+            peopleGroup.style.opacity = '0.3';
+        }
+        if (coffeeMachine) {
+            coffeeMachine.style.opacity = '0.4';
+        }
+    } else {
+        // Other times or locations: stop animation, restore people opacity
+        stopCoffeeAnimation();
+        if (peopleGroup) {
+            peopleGroup.style.opacity = '1';
+        }
+        if (coffeeMachine) {
+            coffeeMachine.style.opacity = '0.22';
+        }
+    }
+}
+
+// Location selector interaction
+const locationItems = document.querySelectorAll('.location-item');
+locationItems.forEach(item => {
+    item.addEventListener('click', function() {
+        // Remove active class from all items
+        locationItems.forEach(i => i.classList.remove('active'));
+        // Add active class to clicked item
+        this.classList.add('active');
+        
+        // Update selected location
+        selectedLocation = this.dataset.location;
+        
+        // Update coffee animation and people opacity
+        updateTimeBasedElements();
+    });
+});
 
 // Timeline interaction
 const timelineItems = document.querySelectorAll('.timeline-item');
@@ -15,6 +135,9 @@ timelineItems.forEach(item => {
         
         // Update temperature icons visibility
         updateTemperatureIcons();
+        
+        // Update coffee animation and people opacity
+        updateTimeBasedElements();
         
         // Update info panel
         showInfo(`Selected time: ${this.dataset.timeLabel}`);
@@ -85,6 +208,9 @@ tempIcons.forEach(icon => {
         // Update all icons
         updateTemperatureIcons();
         
+        // Update coffee animation and people opacity
+        updateTimeBasedElements();
+        
         // Show info
         showInfo(this.dataset.info);
     });
@@ -92,4 +218,7 @@ tempIcons.forEach(icon => {
 
 // Initialize temperature icons on load
 updateTemperatureIcons();
+
+// Initialize coffee animation and time-based elements on load
+updateTimeBasedElements();
 
