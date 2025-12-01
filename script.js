@@ -90,7 +90,8 @@ function updateTimeBasedElements() {
             peopleGroup.style.opacity = '0.3';
         }
         if (coffeeMachine) {
-            coffeeMachine.style.opacity = '0.4';
+            coffeeMachine.classList.add('active');
+            coffeeMachine.style.opacity = '1';
         }
     } else {
         // Other times or locations: stop animation, restore people opacity
@@ -99,6 +100,7 @@ function updateTimeBasedElements() {
             peopleGroup.style.opacity = '1';
         }
         if (coffeeMachine) {
+            coffeeMachine.classList.remove('active');
             coffeeMachine.style.opacity = '0.22';
         }
     }
@@ -116,10 +118,43 @@ locationItems.forEach(item => {
         // Update selected location
         selectedLocation = this.dataset.location;
         
+        // Update layout based on location
+        updateLocationLayout();
+        
         // Update coffee animation and people opacity
         updateTimeBasedElements();
     });
 });
+
+// Update layout based on selected location
+function updateLocationLayout() {
+    const kaldisContainer = document.querySelector('.kaldis-container');
+    const blueDonkey = document.querySelector('.blue-donkey-full');
+    
+    if (selectedLocation === 'Blue Donkey') {
+        // Move bluedonkey down 33%
+        const moveAmount = '33%';
+        if (blueDonkey) {
+            blueDonkey.style.top = moveAmount;
+            blueDonkey.style.opacity = '1';
+        }
+        // Move kaldis down by the same amount (33%) to join with bluedonkey
+        if (kaldisContainer) {
+            kaldisContainer.style.top = '98%'; // 50% (center) + 33% = 83%
+            kaldisContainer.style.left = '42%';
+            
+        }
+    } else {
+        // Reset positions for other locations
+        if (kaldisContainer) {
+            kaldisContainer.style.top = '50%';
+        }
+        if (blueDonkey) {
+            blueDonkey.style.top = '0';
+            blueDonkey.style.opacity = '0';
+        }
+    }
+}
 
 // Timeline interaction
 const timelineItems = document.querySelectorAll('.timeline-item');
@@ -221,4 +256,7 @@ updateTemperatureIcons();
 
 // Initialize coffee animation and time-based elements on load
 updateTimeBasedElements();
+
+// Initialize location layout on load
+updateLocationLayout();
 
