@@ -1,0 +1,315 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('background.png') center/cover no-repeat fixed;
+    min-height: 100vh;
+    color: #1e3a8a;
+}
+
+* {
+    color: inherit;
+}
+
+.container * {
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.container {
+    width: 100%;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    grid-template-rows: 1fr auto;
+    gap: 32px;
+    padding: 32px 16px;
+}
+
+.decibel-meter {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 24px 16px;
+    height: fit-content;
+    position: sticky;
+    top: 32px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.main-content {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.time-display {
+    font-size: 16px;
+    opacity: 0.9;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.locations-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    width: 100%;
+    max-width: 1120px;
+}
+
+.location-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.location-card:hover {
+    transform: translateY(-5px);
+}
+
+.location-name {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.decibel-circle {
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+}
+
+.wave-path {
+    filter: drop-shadow(0 0 10px currentColor);
+}
+
+.decibel-value {
+    font-size: 29px;
+    font-weight: bold;
+    text-anchor: middle;
+    fill: url(#blueGradient);
+}
+
+.decibel-unit {
+    font-size: 13px;
+    text-anchor: middle;
+    fill: url(#blueGradient);
+}
+
+.waitz-info {
+    margin-top: 16px;
+    text-align: center;
+}
+
+.waitz-percentage {
+    font-size: 26px;
+    font-weight: bold;
+    color: #4ade80;
+    margin-bottom: 4px;
+}
+
+.waitz-percentage.moderate {
+    color: #fbbf24;
+}
+
+.waitz-percentage.busy {
+    color: #ef4444;
+}
+
+.waitz-label {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+/* Decibel Meter - Left Side */
+.meter-title {
+    font-size: 11px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.thermometer-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 480px;
+    margin-bottom: 16px;
+}
+
+.thermometer-tube {
+    position: relative;
+    width: 32px;
+    height: 100%;
+    background: linear-gradient(to bottom, #ef4444 0%, #fbbf24 50%, #10b981 100%);
+    border-radius: 16px 16px 0 0;
+    overflow: visible;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.2), 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.thermometer-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0%;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 16px 16px 0 0;
+    transition: height 0.5s ease-out;
+    pointer-events: none;
+}
+
+.thermometer-bulb {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.5), inset 0 -5px 10px rgba(0,0,0,0.3);
+}
+
+.thermometer-labels {
+    position: absolute;
+    left: 40px;
+    top: 0;
+    height: 100%;
+    width: 50px;
+}
+
+.label-item {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+.label-db {
+    font-weight: bold;
+    min-width: 30px;
+    color: #ffffff;
+}
+
+.hearing-risk-label {
+    text-align: center;
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 8px;
+    color: #10b981;
+}
+
+/* Animal Sounds Section */
+.animal-sounds-section {
+    grid-column: 2;
+    grid-row: 2;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    max-width: 1120px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.sounds-title {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+.sounds-subtitle {
+    font-size: 11px;
+    text-align: center;
+    opacity: 0.7;
+    margin-bottom: 16px;
+}
+
+/* Music Pad Grid */
+.sound-pad-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 12px;
+}
+
+.sound-pad-btn {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: white;
+    font-weight: 600;
+    aspect-ratio: 1;
+}
+
+.sound-pad-btn:hover {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(5, 150, 105, 0.2));
+    border-color: rgba(16, 185, 129, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.sound-pad-btn:active {
+    transform: translateY(0) scale(0.95);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.5), rgba(5, 150, 105, 0.4));
+}
+
+.sound-pad-btn.playing {
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-color: #10b981;
+    animation: pulse 0.5s ease-in-out;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.pad-icon {
+    font-size: 32px;
+    line-height: 1;
+}
+
+.pad-image {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.pad-name {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
