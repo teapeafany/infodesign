@@ -4,6 +4,57 @@
     box-sizing: border-box;
 }
 
+/* Navigation Right Corner */
+.nav-right {
+    position: fixed;
+    top: 20px;
+    right: 40px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.nav-right * {
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: unset !important;
+    background-clip: unset !important;
+}
+
+.nav-current {
+    font-size: 16px;
+    font-weight: normal;
+    color: #fff !important;
+    opacity: 0.8;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.nav-separator {
+    font-size: 16px;
+    color: #fff !important;
+    opacity: 0.8;
+    padding: 0 5px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.nav-link {
+    font-size: 16px;
+    font-weight: normal;
+    color: #fff !important;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    padding: 5px 10px;
+    border-radius: 5px;
+    opacity: 0.8;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.nav-link:hover {
+    opacity: 1;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('background.png') center/cover no-repeat fixed;
