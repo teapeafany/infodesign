@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decibel Monitor</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Combined Dot Navigation and Legend -->
+    <div class="dot-navigation">
+        <div class="nav-legend-item active" data-index="0" data-location="PG3">
+            <div class="nav-dot"></div>
+            <div class="nav-label">PG3 <span class="occupancy-text">--</span></div>
+        </div>
+        <div class="nav-legend-item" data-index="1" data-location="Kaldis">
+            <div class="nav-dot"></div>
+            <div class="nav-label">Kaldis <span class="occupancy-text">--</span></div>
+        </div>
+        <div class="nav-legend-item" data-index="2" data-location="Blue Donkey">
+            <div class="nav-dot"></div>
+            <div class="nav-label">Blue Donkey <span class="occupancy-text">--</span></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Center: Main content -->
+        <div class="main-content">
+            <div class="locations-grid">
+                <!-- PG3 -->
+                <div class="location-card" data-location="PG3">
+                    <div class="location-image" data-location="PG3"></div>
+                </div>
+
+                <!-- Kaldis -->
+                <div class="location-card" data-location="Kaldis">
+                    <div class="location-image" data-location="Kaldis"></div>
+                </div>
+
+                <!-- Blue Donkey -->
+                <div class="location-card" data-location="Blue Donkey">
+                    <div class="location-image" data-location="Blue Donkey"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bubble Chart Section -->
+        <div class="bubble-chart-section">
+            <div class="legend-container" id="legendContainer">
+                <!-- Legend will be rendered here -->
+            </div>
+            <div class="chart-wrapper">
+                <button id="syncTimeBtn" class="sync-time-btn">⟲ Sync to Real Time</button>
+                <div class="time-display" id="timeDisplay">--</div>
+                <svg id="bubbleChart" width="550" height="550">
+                    <defs>
+                        <linearGradient id="blueGradientChart" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#1e3a8a;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+                        </linearGradient>
+                        
+                        <!-- Location color gradients -->
+                        <linearGradient id="pg3Gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#10b981;stop-opacity:0.8" />
+                            <stop offset="100%" style="stop-color:#059669;stop-opacity:0.8" />
+                        </linearGradient>
+                        
+                        <linearGradient id="kaldisGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.8" />
+                            <stop offset="100%" style="stop-color:#1e40af;stop-opacity:0.8" />
+                        </linearGradient>
+                        
+                        <linearGradient id="blueDonkeyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:0.8" />
+                            <stop offset="100%" style="stop-color:#d97706;stop-opacity:0.8" />
+                        </linearGradient>
+                    </defs>
+                    
+                    <!-- Circular timeline will be drawn here -->
+                    <g id="timelineCircle"></g>
+                    
+                    <!-- Bubbles will be drawn here -->
+                    <g id="bubblesGroup"></g>
+                    
+                    <!-- Time labels -->
+                    <g id="timeLabels"></g>
+                    
+                    <!-- Center info -->
+                    <g id="centerInfo"></g>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+    <script src="bubble-chart.js"></script>
+</body>
+</html>

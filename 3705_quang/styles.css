@@ -1,0 +1,513 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #e8908a;
+    min-height: 100vh;
+    color: #1e3a8a;
+    padding: 20px;
+}
+
+.container {
+    max-width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: flex-start;
+    padding: 20px;
+    position: relative;
+}
+
+.dot-navigation {
+    position: fixed;
+    left: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    z-index: 1000;
+}
+
+.nav-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0.5;
+}
+
+.nav-legend-item:hover {
+    opacity: 0.8;
+    transform: translateX(5px);
+}
+
+.nav-legend-item.active {
+    opacity: 1;
+    transform: translateX(10px);
+}
+
+.nav-dot {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    flex-shrink: 0;
+}
+
+.nav-legend-item:hover .nav-dot {
+    transform: scale(1.1);
+}
+
+.nav-legend-item.active .nav-dot {
+    transform: scale(1.2);
+    border: 2px solid white;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.4);
+}
+
+.nav-label {
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
+}
+
+.occupancy-text {
+    font-size: 14px;
+    opacity: 0.8;
+    margin-left: 5px;
+}
+
+/* PG3 dot - green gradient */
+.nav-legend-item[data-location="PG3"] .nav-dot {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.nav-legend-item[data-location="PG3"].active .nav-label {
+    color: #81fe8b;
+    text-shadow: 0 0 10px rgba(129, 254, 139, 0.5);
+}
+
+/* Kaldis dot - blue gradient */
+.nav-legend-item[data-location="Kaldis"] .nav-dot {
+    background: linear-gradient(135deg, #3b82f6, #1e40af);
+}
+
+.nav-legend-item[data-location="Kaldis"].active .nav-label {
+    color: #b3c3ff;
+    text-shadow: 0 0 10px rgba(179, 195, 255, 0.5);
+}
+
+/* Blue Donkey dot - orange gradient */
+.nav-legend-item[data-location="Blue Donkey"] .nav-dot {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.nav-legend-item[data-location="Blue Donkey"].active .nav-label {
+    color: #fee89e;
+    text-shadow: 0 0 10px rgba(254, 232, 158, 0.5);
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 35%;
+    min-width: 0;
+    height: 100vh;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    margin-left: 250px; /* Add space for navigation legend */
+}
+
+.main-content::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+.time-display {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    margin-bottom: 16px;
+    text-align: center;
+}
+.locations-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+    max-width: 400px;
+}
+
+.location-card {
+    background: transparent;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+    min-height: 100vh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    position: relative;
+    overflow: hidden;
+}
+
+.location-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: opacity 0.5s ease;
+    z-index: 1;
+}
+
+/* Default images for each location at 0% occupancy */
+.location-image[data-location="PG3"] {
+    background-image: url('images/pg3-0.png');
+}
+
+.location-image[data-location="Kaldis"] {
+    background-image: url('images/kaldis-0.png');
+}
+
+.location-image[data-location="Blue Donkey"] {
+    background-image: url('images/bluedonkey-0.png');
+}
+
+.location-overlay {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.location-card:hover {
+    transform: scale(1.02);
+}
+
+.location-name {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.location-card[data-location="PG3"] .location-name {
+    color: #10b981;
+}
+
+.location-card[data-location="Kaldis"] .location-name {
+    color: #3b82f6;
+}
+
+.location-card[data-location="Blue Donkey"] .location-name {
+    color: #f59e0b;
+}
+
+.decibel-circle {
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+}
+
+.wave-path {
+    filter: drop-shadow(0 0 10px currentColor);
+}
+
+.decibel-value {
+    font-size: 29px;
+    font-weight: bold;
+    text-anchor: middle;
+    fill: url(#blueGradient);
+}
+
+.decibel-unit {
+    font-size: 13px;
+    text-anchor: middle;
+    fill: url(#blueGradient);
+}
+
+.waitz-info {
+    margin-top: 16px;
+    text-align: center;
+}
+
+.waitz-percentage {
+    font-size: 26px;
+    font-weight: bold;
+    color: #4ade80;
+    margin-bottom: 4px;
+}
+
+.waitz-percentage.moderate {
+    color: #fbbf24;
+}
+
+.waitz-percentage.busy {
+    color: #ef4444;
+}
+
+.waitz-label {
+    font-size: 14px;
+    opacity: 0.8;
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Bubble Chart Section */
+.bubble-chart-section {
+    width: calc(65% - 250px);
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    padding: 20px;
+    overflow: visible;
+}
+
+/* Hide the separate bubble chart legend since it's now combined with nav */
+.legend-container {
+    display: none;
+}
+
+.chart-title {
+    text-align: center;
+    font-size: 38px;
+    font-weight: bold;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 30px;
+    padding: 20px;
+    border-radius: 16px;
+}
+
+.control-btn {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.control-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.control-btn:active {
+    transform: translateY(0);
+}
+
+.speed-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    border-radius: 8px;
+}
+
+.speed-control label {
+    font-weight: bold;
+    color: white;
+}
+
+#speedSlider {
+    width: 150px;
+}
+
+#speedValue {
+    font-weight: bold;
+    min-width: 40px;
+    color: white;
+}
+
+.chart-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    overflow: visible;
+}
+
+.sync-time-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    opacity: 0.7;
+}
+
+.sync-time-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    opacity: 1;
+}
+
+.sync-time-btn:active {
+    transform: translateY(0);
+}
+
+.sync-time-btn.synced {
+    opacity: 0.3;
+    cursor: default;
+}
+
+.sync-time-btn.synced:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.legend-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px 0;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.legend-item:hover {
+    background: transparent;
+}
+
+.legend-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid white;
+    flex-shrink: 0;
+}
+
+.legend-text {
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+#bubbleChart {
+    max-width: 100%;
+    max-height: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Bubble Chart SVG Styles */
+.time-tick {
+    stroke: #1e3a8a;
+    stroke-width: 2;
+    opacity: 0.3;
+}
+
+.time-label {
+    fill: #1e3a8a;
+    font-size: 12px;
+    font-weight: bold;
+    text-anchor: middle;
+}
+
+.timeline-circle {
+    fill: none;
+    stroke: #1e3a8a;
+    stroke-width: 3;
+    opacity: 0.3;
+}
+
+.bubble {
+    stroke: white;
+    stroke-width: 2;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.bubble:hover {
+    opacity: 1 !important;
+    stroke-width: 3;
+}
+
+.bubble-label {
+    fill: #1e3a8a;
+    font-size: 6px;
+    font-weight: bold;
+    text-anchor: middle;
+    pointer-events: none;
+}
+
+.center-label {
+    fill: url(#blueGradientChart);
+    font-size: 14px;
+    font-weight: bold;
+    text-anchor: middle;
+}
+
+.center-value {
+    fill: url(#blueGradientChart);
+    font-size: 24px;
+    font-weight: bold;
+    text-anchor: middle;
+}
+
+.progress-indicator {
+    fill: #3b82f6;
+    stroke: #1e3a8a;
+    stroke-width: 3;
+    cursor: grab;
+    transition: r 0.2s;
+}
+
+.progress-indicator:hover {
+    r: 15;
+}
+
+.progress-indicator:active {
+    cursor: grabbing;
+}

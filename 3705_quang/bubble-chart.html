@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decibel Bubble Chart - Circular Timeline</title>
+    <link rel="stylesheet" href="bubble-chart.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Decibel Levels - Circular Timeline</h1>
+        
+        <div class="controls">
+            <button id="playBtn" class="control-btn">▶ Play</button>
+            <button id="resetBtn" class="control-btn">↻ Reset</button>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <input type="range" id="speedSlider" min="1" max="10" value="5">
+                <span id="speedValue">5x</span>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <div class="legend-container" id="legendContainer">
+                <!-- Legend will be rendered here -->
+            </div>
+            <svg id="bubbleChart" width="500" height="500">
+                <defs>
+                    <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#1e3a8a;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    </linearGradient>
+                    
+                    <!-- Location color gradients -->
+                    <linearGradient id="pg3Gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#10b981;stop-opacity:0.8" />
+                        <stop offset="100%" style="stop-color:#059669;stop-opacity:0.8" />
+                    </linearGradient>
+                    
+                    <linearGradient id="kaldisGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.8" />
+                        <stop offset="100%" style="stop-color:#1e40af;stop-opacity:0.8" />
+                    </linearGradient>
+                    
+                    <linearGradient id="blueDonkeyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:0.8" />
+                        <stop offset="100%" style="stop-color:#d97706;stop-opacity:0.8" />
+                    </linearGradient>
+                </defs>
+                
+                <!-- Circular timeline will be drawn here -->
+                <g id="timelineCircle"></g>
+                
+                <!-- Bubbles will be drawn here -->
+                <g id="bubblesGroup"></g>
+                
+                <!-- Time labels -->
+                <g id="timeLabels"></g>
+                
+                <!-- Center info -->
+                <g id="centerInfo"></g>
+            </svg>
+        </div>
+
+        <div class="info-panel">
+            <div class="current-time">
+                <h3>Current Time</h3>
+                <div id="currentTimeDisplay">--:--:-- --</div>
+            </div>
+            <div class="stats">
+                <h3>Statistics</h3>
+                <div id="statsDisplay">
+                    <div class="stat-item">
+                        <span class="stat-label">Total Readings:</span>
+                        <span class="stat-value" id="totalReadings">--</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Avg Decibel:</span>
+                        <span class="stat-value" id="avgDecibel">--</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Max Decibel:</span>
+                        <span class="stat-value" id="maxDecibel">--</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="config.js"></script>
+    <script src="bubble-chart.js"></script>
+</body>
+</html>
