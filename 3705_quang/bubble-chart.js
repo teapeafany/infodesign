@@ -1,3 +1,7 @@
+// Bubble Chart Module - wrapped to avoid global conflicts
+(function() {
+    'use strict';
+    
 // Configuration
 const SVG_WIDTH = 500;
 const SVG_HEIGHT = 500;
@@ -15,12 +19,11 @@ const LOCATION_COLORS = {
 };
 
 // State
-let data = [];
-let isPlaying = false;
+let bubbleChartData = [];
 let currentTimeIndex = 0;
-let animationInterval = null;
-let animationSpeed = 5;
-let selectedLocations = new Set(['PG3', 'Kaldis', 'Blue Donkey']);
+let selectedLocations = new Set(['PG3']); // Start with only PG3 selected
+let autoSyncEnabled = true;
+let syncInterval = null;
 
 // Fetch and parse data (same as main script)
 async function fetchGoogleSheetsData() {
@@ -64,7 +67,7 @@ function parseGoogleSheetsData(rows) {
     return data;
 }
 
-const fallbackData = `10:51:00 AM	Blue Donkey	60.1
+const bubbleChartFallbackData = `10:51:00 AM	Blue Donkey	60.1
 10:51:00 AM	PG3	60.1
 1:47:00 PM	Skiles	61.1
 3:27:00 PM	PG3	63.2
@@ -94,7 +97,7 @@ const fallbackData = `10:51:00 AM	Blue Donkey	60.1
 12:30:00 PM	PG3	48`;
 
 function parseFallbackData() {
-    const lines = fallbackData.trim().split('\n');
+    const lines = bubbleChartFallbackData.trim().split('\n');
     const data = [];
 
     lines.forEach(line => {
@@ -285,54 +288,43 @@ function drawTimeline() {
     }
 }
 
-// Draw legend
+// Draw legend - now uses the combined nav-legend
 function drawLegend() {
-    const legendContainer = document.getElementById('legendContainer');
-    const locations = ['PG3', 'Kaldis', 'Blue Donkey'];
+    // Don't create a separate legend - it's already combined with the dot navigation
+    // Just set up click handlers for the nav-legend items to update the chart
+    const navLegendItems = document.querySelectorAll('.nav-legend-item');
     
-    const colorMap = {
-        'PG3': 'linear-gradient(135deg, #10b981, #059669)',
-        'Kaldis': 'linear-gradient(135deg, #3b82f6, #1e40af)',
-        'Blue Donkey': 'linear-gradient(135deg, #f59e0b, #d97706)'
-    };
-    
-    locations.forEach((location) => {
-        const legendItem = document.createElement('div');
-        legendItem.className = 'legend-item';
-        legendItem.setAttribute('data-location', location);
-        legendItem.style.opacity = selectedLocations.has(location) ? '1' : '0.3';
-        
-        const circle = document.createElement('div');
-        circle.className = 'legend-circle';
-        circle.style.background = colorMap[location];
-        
-        const text = document.createElement('div');
-        text.className = 'legend-text';
-        text.textContent = location;
-        
-        legendItem.appendChild(circle);
-        legendItem.appendChild(text);
-        legendContainer.appendChild(legendItem);
-        
-        legendItem.addEventListener('click', () => toggleLocation(location));
+    navLegendItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const location = item.getAttribute('data-location');
+            toggleLocation(location);
+        });
     });
 }
 
 function toggleLocation(location) {
-    if (selectedLocations.has(location)) {
-        selectedLocations.delete(location);
-    } else {
-        selectedLocations.add(location);
-    }
+    // Only allow one location to be selected at a time
+    selectedLocations.clear();
+    selectedLocations.add(location);
     updateLegendStyle();
     updateBubbles();
 }
 
+// Make toggleLocation available globally for script.js
+window.toggleLocation = toggleLocation;
+
 function updateLegendStyle() {
-    document.querySelectorAll('.legend-item').forEach(item => {
+    // Update the combined nav-legend items instead of separate legend
+    const navLegendItems = document.querySelectorAll('.nav-legend-item');
+    navLegendItems.forEach(item => {
         const location = item.getAttribute('data-location');
         const isSelected = selectedLocations.has(location);
-        item.style.opacity = isSelected ? '1' : '0.3';
+        
+        if (isSelected) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
     });
 }
 
@@ -341,7 +333,7 @@ function updateBubbles() {
     const bubblesGroup = d3.select('#bubblesGroup');
     
     // Get all data up to current time
-    const visibleData = data.slice(0, currentTimeIndex + 1)
+    const visibleData = bubbleChartData.slice(0, currentTimeIndex + 1)
         .filter(d => selectedLocations.has(d.location));
     
     // Bind data
@@ -393,14 +385,48 @@ function updateBubbles() {
     // Update progress indicator
     updateProgressIndicator();
     updateStats();
+    updateLocationCards();
+}
+
+// Update location cards with current chart data
+function updateLocationCards() {
+    if (currentTimeIndex >= 0 && currentTimeIndex < bubbleChartData.length) {
+        const currentTime = bubbleChartData[currentTimeIndex].timeInMinutes;
+        
+        // Get the data for each location at the current time
+        const locationData = {};
+        
+        // Find the most recent data point for each location up to current time
+        for (let i = currentTimeIndex; i >= 0; i--) {
+            const d = bubbleChartData[i];
+            if (!locationData[d.location]) {
+                locationData[d.location] = d.decibel;
+            }
+            // Stop if we have all three locations
+            if (Object.keys(locationData).length === 3) break;
+        }
+        
+        // Update each location card
+        ['PG3', 'Kaldis', 'Blue Donkey'].forEach(location => {
+            if (locationData[location] !== undefined) {
+                const card = document.querySelector(`.location-card[data-location="${location}"]`);
+                if (card) {
+                    const valueEl = card.querySelector('.decibel-value');
+                    if (valueEl) {
+                        valueEl.textContent = locationData[location].toFixed(1);
+                    }
+                }
+            }
+        });
+    }
 }
 
 function updateProgressIndicator() {
     const progressGroup = d3.select('#centerInfo');
     progressGroup.selectAll('*').remove();
     
-    if (currentTimeIndex >= 0 && currentTimeIndex < data.length) {
-        const currentData = data[currentTimeIndex];
+    if (currentTimeIndex >= 0 && currentTimeIndex < bubbleChartData.length) {
+        const currentData = bubbleChartData[currentTimeIndex];
         const angle = minutesToAngle(currentData.timeInMinutes);
         const coords = angleToCoords(angle, TIMELINE_RADIUS);
         
@@ -414,49 +440,85 @@ function updateProgressIndicator() {
             .attr('stroke-width', 3)
             .style('opacity', 0.5);
         
-        // Draw indicator circle
-        progressGroup.append('circle')
+        // Draw indicator circle (draggable)
+        const indicator = progressGroup.append('circle')
             .attr('class', 'progress-indicator')
             .attr('cx', coords.x)
             .attr('cy', coords.y)
-            .attr('r', 4);
+            .attr('r', 12)
+            .style('cursor', 'grab');
         
-        // Display current time in center
-        progressGroup.append('text')
-            .attr('class', 'center-label')
-            .attr('x', CENTER_X)
-            .attr('y', CENTER_Y - 15)
-            .text('Current Time');
+        // Make indicator draggable
+        setupDragging(indicator);
         
-        progressGroup.append('text')
-            .attr('class', 'center-value')
-            .attr('x', CENTER_X)
-            .attr('y', CENTER_Y + 15)
-            .text(currentData.time);
+        // Get current location data
+        const currentLocation = Array.from(selectedLocations)[0];
+        const locationData = bubbleChartData.filter(d => d.location === currentLocation && d.timeInMinutes <= currentData.timeInMinutes);
+        const latestData = locationData.length > 0 ? locationData[locationData.length - 1] : null;
         
-        // Update UI
-        document.getElementById('currentTimeDisplay').textContent = currentData.time;
+        // Display only decibel info in center
+        if (latestData) {
+            progressGroup.append('text')
+                .attr('class', 'center-decibel')
+                .attr('x', CENTER_X)
+                .attr('y', CENTER_Y + 10)
+                .text(latestData.decibel.toFixed(1));
+            
+            progressGroup.append('text')
+                .attr('class', 'center-db-unit')
+                .attr('x', CENTER_X)
+                .attr('y', CENTER_Y + 35)
+                .text('dB');
+        }
     }
 }
 
+// Setup dragging for the clock arm
+function setupDragging(indicator) {
+    const svg = d3.select('#bubbleChart');
+    
+    const drag = d3.drag()
+        .on('start', function(event) {
+            disableAutoSync(); // Disable auto-sync when user drags
+            d3.select(this).style('cursor', 'grabbing');
+        })
+        .on('drag', function(event) {
+            // Get mouse position relative to center
+            const dx = event.x - CENTER_X;
+            const dy = event.y - CENTER_Y;
+            
+            // Calculate angle
+            let angle = Math.atan2(dy, dx) * 180 / Math.PI;
+            angle = (angle + 90 + 360) % 360; // Adjust so 0Â° is at top
+            
+            // Convert angle to minutes
+            const minutes = (angle / 360) * (24 * 60);
+            
+            // Find closest data point
+            let closestIndex = 0;
+            let minDiff = Math.abs(bubbleChartData[0].timeInMinutes - minutes);
+            
+            for (let i = 1; i < bubbleChartData.length; i++) {
+                const diff = Math.abs(bubbleChartData[i].timeInMinutes - minutes);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestIndex = i;
+                }
+            }
+            
+            // Update current time index
+            currentTimeIndex = closestIndex;
+            updateBubbles();
+        })
+        .on('end', function(event) {
+            d3.select(this).style('cursor', 'grab');
+        });
+    
+    indicator.call(drag);
+}
+
 function updateStats() {
-    const visibleData = data.slice(0, currentTimeIndex + 1)
-        .filter(d => selectedLocations.has(d.location));
-    
-    const actualData = visibleData.filter(d => !d.isInterpolated);
-    const predictedData = visibleData.filter(d => d.isInterpolated);
-    
-    const totalReadings = visibleData.length;
-    const avgDecibel = totalReadings > 0 
-        ? (visibleData.reduce((sum, d) => sum + d.decibel, 0) / totalReadings).toFixed(1)
-        : '--';
-    const maxDecibel = totalReadings > 0
-        ? Math.max(...visibleData.map(d => d.decibel)).toFixed(1)
-        : '--';
-    
-    document.getElementById('totalReadings').textContent = `${totalReadings} (${actualData.length} actual, ${predictedData.length} predicted)`;
-    document.getElementById('avgDecibel').textContent = avgDecibel + ' dB';
-    document.getElementById('maxDecibel').textContent = maxDecibel + ' dB';
+    // Stats display removed, keeping function for compatibility
 }
 
 function showTooltip(event, d) {
@@ -484,57 +546,50 @@ function hideTooltip() {
     d3.selectAll('.tooltip').remove();
 }
 
-// Animation controls
-function play() {
-    if (isPlaying) return;
-    
-    isPlaying = true;
-    document.getElementById('playBtn').textContent = '⏸ Pause';
-    
-    animationInterval = setInterval(() => {
-        currentTimeIndex++;
-        if (currentTimeIndex >= data.length) {
-            currentTimeIndex = data.length - 1;
-            pause();
-        } else {
+// Enable/disable auto-sync to real time
+function enableAutoSync() {
+    autoSyncEnabled = true;
+    const btn = document.getElementById('syncTimeBtn');
+    if (btn) {
+        btn.classList.add('synced');
+    }
+    if (syncInterval) clearInterval(syncInterval);
+    syncInterval = setInterval(() => {
+        if (autoSyncEnabled) {
+            setToCurrentTime();
             updateBubbles();
         }
-    }, 1000 / animationSpeed);
+    }, 1000);
 }
 
-function pause() {
-    isPlaying = false;
-    document.getElementById('playBtn').textContent = '▶ Play';
-    if (animationInterval) {
-        clearInterval(animationInterval);
-        animationInterval = null;
+function disableAutoSync() {
+    autoSyncEnabled = false;
+    const btn = document.getElementById('syncTimeBtn');
+    if (btn) {
+        btn.classList.remove('synced');
     }
-}
-
-function reset() {
-    pause();
-    currentTimeIndex = 0;
-    updateBubbles();
+    if (syncInterval) {
+        clearInterval(syncInterval);
+        syncInterval = null;
+    }
 }
 
 // Initialize
 async function init() {
-    console.log('Fetching data from Google Sheets...');
     const sheetsData = await fetchGoogleSheetsData();
 
     let rawData = [];
     if (sheetsData.length > 0) {
-        console.log('Successfully fetched data from Google Sheets');
         rawData = parseGoogleSheetsData(sheetsData);
     } else {
-        console.log('Using fallback data');
         rawData = parseFallbackData();
     }
     
     // Generate interpolated data (every 30 minutes)
-    console.log('Original data points:', rawData.length);
-    data = generateInterpolatedData(rawData);
-    console.log('After interpolation (every 30 min):', data.length);
+    bubbleChartData = generateInterpolatedData(rawData);
+    
+    // Set initial position to current real time
+    setToCurrentTime();
     
     // Draw static elements
     drawTimeline();
@@ -544,27 +599,45 @@ async function init() {
     // Initial display
     updateBubbles();
     
-    // Setup controls
-    document.getElementById('playBtn').addEventListener('click', () => {
-        if (isPlaying) {
-            pause();
-        } else {
-            play();
-        }
-    });
+    // Setup sync button
+    const syncBtn = document.getElementById('syncTimeBtn');
+    if (syncBtn) {
+        syncBtn.addEventListener('click', () => {
+            enableAutoSync();
+            setToCurrentTime();
+            updateBubbles();
+        });
+    }
     
-    document.getElementById('resetBtn').addEventListener('click', reset);
+    // Auto-sync to match real time every second
+    enableAutoSync();
+}
+
+// Set chart to current real time
+function setToCurrentTime() {
+    const now = new Date();
+    let hours = now.getHours();
+    const minutes = now.getMinutes();
+    const currentMinutes = hours * 60 + minutes;
     
-    document.getElementById('speedSlider').addEventListener('input', (e) => {
-        animationSpeed = parseInt(e.target.value);
-        document.getElementById('speedValue').textContent = animationSpeed + 'x';
-        
-        if (isPlaying) {
-            pause();
-            play();
+    // Find closest data point to current time
+    let closestIndex = 0;
+    let minDiff = Math.abs(bubbleChartData[0].timeInMinutes - currentMinutes);
+    
+    for (let i = 1; i < bubbleChartData.length; i++) {
+        const diff = Math.abs(bubbleChartData[i].timeInMinutes - currentMinutes);
+        if (diff < minDiff) {
+            minDiff = diff;
+            closestIndex = i;
         }
-    });
+    }
+    
+    currentTimeIndex = closestIndex;
 }
 
 // Start the app
-init();
+if (document.getElementById('bubbleChart')) {
+    init();
+}
+
+})(); // End of bubble chart module

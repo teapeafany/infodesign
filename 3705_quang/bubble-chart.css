@@ -252,16 +252,40 @@ body {
     font-weight: bold;
 }
 
-.center-label {
+.center-location {
     fill: url(#blueGradient);
-    font-size: 14px;
+    font-size: 18px;
     font-weight: bold;
     text-anchor: middle;
 }
 
-.center-value {
+.center-decibel {
+    fill: #3b82f6;
+    font-size: 48px;
+    font-weight: bold;
+    text-anchor: middle;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.center-db-unit {
+    fill: #3b82f6;
+    font-size: 18px;
+    font-weight: bold;
+    text-anchor: middle;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.center-time-label {
     fill: url(#blueGradient);
-    font-size: 24px;
+    font-size: 12px;
+    font-weight: bold;
+    text-anchor: middle;
+    opacity: 0.7;
+}
+
+.center-time-value {
+    fill: url(#blueGradient);
+    font-size: 16px;
     font-weight: bold;
     text-anchor: middle;
 }
@@ -270,6 +294,16 @@ body {
     fill: #3b82f6;
     stroke: #1e3a8a;
     stroke-width: 3;
+    cursor: grab;
+    transition: r 0.2s;
+}
+
+.progress-indicator:hover {
+    r: 15;
+}
+
+.progress-indicator:active {
+    cursor: grabbing;
 }
 
 /* Responsive */

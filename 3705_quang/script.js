@@ -58,22 +58,38 @@ function updateWaitzForLocation(locationName) {
     const card = document.querySelector(`.location-card[data-location="${locationName}"]`);
     if (!card) return;
 
-    const percentageElement = card.querySelector('.waitz-percentage');
+    const locationImage = card.querySelector('.location-image');
+    
+    // Update navigation legend occupancy
+    const navItem = document.querySelector(`.nav-legend-item[data-location="${locationName}"]`);
+    const occupancyText = navItem ? navItem.querySelector('.occupancy-text') : null;
 
     if (!matchedLocation) {
-        percentageElement.textContent = '--';
-        percentageElement.className = 'waitz-percentage';
+        if (occupancyText) occupancyText.textContent = '--';
         return;
     }
 
     const percentage = (matchedLocation.percentage || 0) * 100;
-    let busynessClass = '';
-    if (percentage < 40) busynessClass = '';
-    else if (percentage < 70) busynessClass = 'moderate';
-    else busynessClass = 'busy';
-
-    percentageElement.textContent = `${Math.round(percentage)}%`;
-    percentageElement.className = `waitz-percentage ${busynessClass}`;
+    let imageLevel = '0'; // default to 0% crowd image
+    
+    if (percentage < 40) {
+        imageLevel = '0';
+    } else if (percentage < 70) {
+        imageLevel = '50';
+    } else {
+        imageLevel = '100';
+    }
+    
+    // Update occupancy text in navigation
+    if (occupancyText) {
+        occupancyText.textContent = `${Math.round(percentage)}%`;
+    }
+    
+    // Update background image based on occupancy
+    const locationKey = locationName.toLowerCase().replace(/ /g, '');
+    if (locationImage) {
+        locationImage.style.backgroundImage = `url('images/${locationKey}-${imageLevel}.png')`;
+    }
 }
 
 // Google Sheets API Integration
@@ -709,3 +725,53 @@ function updateThermometer(decibel) {
 
 // Initialize on load
 init();
+
+// Dot Navigation Functionality
+document.addEventListener('DOMContentLoaded', () => {
+    const mainContent = document.querySelector('.main-content');
+    const navLegendItems = document.querySelectorAll('.nav-legend-item');
+    const locationCards = document.querySelectorAll('.location-card');
+    const locationNames = ['PG3', 'Kaldis', 'Blue Donkey'];
+
+    // Handle nav-legend item click
+    navLegendItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const index = parseInt(item.dataset.index);
+            const location = item.dataset.location;
+            
+            // Scroll to location card
+            locationCards[index].scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Update bubble chart legend to match
+            updateBubbleChartLocation(location);
+        });
+    });
+
+    // Update active item on scroll
+    mainContent.addEventListener('scroll', () => {
+        const scrollPosition = mainContent.scrollTop;
+        const viewportHeight = mainContent.clientHeight;
+        
+        locationCards.forEach((card, index) => {
+            const cardTop = card.offsetTop;
+            const cardBottom = cardTop + card.offsetHeight;
+            const scrollCenter = scrollPosition + viewportHeight / 2;
+            
+            if (scrollCenter >= cardTop && scrollCenter < cardBottom) {
+                navLegendItems.forEach(item => item.classList.remove('active'));
+                navLegendItems[index].classList.add('active');
+                
+                // Update bubble chart legend to match
+                updateBubbleChartLocation(locationNames[index]);
+            }
+        });
+    });
+    
+    // Function to update bubble chart legend
+    function updateBubbleChartLocation(locationName) {
+        // Update the selected location in the bubble chart
+        if (window.toggleLocation) {
+            window.toggleLocation(locationName);
+        }
+    }
+});
