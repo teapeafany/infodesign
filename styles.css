@@ -22,6 +22,47 @@ body {
     overflow: hidden;
 }
 
+/* Navigation Right Corner */
+.nav-right {
+    position: absolute;
+    top: 20px;
+    right: 40px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.nav-current {
+    font-size: 16px;
+    font-weight: normal;
+    color: #000;
+    opacity: 1;
+}
+
+.nav-separator {
+    font-size: 16px;
+    color: #000;
+    opacity: 0.3;
+    padding: 0 5px;
+}
+
+.nav-link {
+    font-size: 16px;
+    font-weight: normal;
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    padding: 5px 10px;
+    border-radius: 5px;
+    opacity: 0.3;
+}
+
+.nav-link:hover {
+    opacity: 0.6;
+}
+
 /* Location Selector */
 .location-selector {
     display: flex;
