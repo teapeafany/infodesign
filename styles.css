@@ -156,6 +156,46 @@ body {
     overflow: hidden;
 }
 
+/* Sound Text */
+.sound-text {
+    position: fixed;
+    top: calc(50% - 300px);
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Inter', 'Arial', sans-serif;
+    font-weight: bold;
+    font-size: 120px;
+    letter-spacing: -8px;
+    color: #FFA500;
+    opacity: 0.35;
+    z-index: 0;
+    pointer-events: none;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+/* Decibel Number */
+.decibel-number {
+    position: fixed;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Inter', 'Arial', sans-serif;
+    font-weight: bold;
+    font-size: 500px;
+    color: #FFA500;
+    opacity: 0.25;
+    z-index: 0;
+    pointer-events: none;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.decibel-unit {
+    font-size: 200px;
+    margin-left: 0.2em;
+}
+
 /* Kaldis Center Image */
 .kaldis-container {
     position: absolute;
@@ -251,19 +291,6 @@ body {
     justify-content: center;
 }
 
-/* Sun icon for yellow and peach */
-.temp-icon.yellow .temp-icon-inner::before,
-.temp-icon.peach .temp-icon-inner::before {
-    content: '';
-    width: 100%;
-    height: 100%;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 45 45'%3E%3Cpath d='M22.5 3.75V7.5' stroke='white' stroke-width='3.75' stroke-linecap='round'/%3E%3Cpath d='M22.5 37.5V41.25' stroke='white' stroke-width='3.75' stroke-linecap='round'/%3E%3Cpath d='M3.75 22.5H7.5' stroke='white' stroke-width='3.75' stroke-linecap='round'/%3E%3Cpath d='M37.5 22.5H41.25' stroke='white' stroke-width='3.75' stroke-linecap='round'/%3E%3Cpath d='M8.5 8.5L11 11' stroke='white' stroke-width='3.75' stroke-linecap='round'/%3E%3Cpath d='M34 34L36.5 36.5' stroke='white' stroke-width='3.75' stroke-linecap='round'/%3E%3Cpath d='M36.5 8.5L34 11' stroke='white' stroke-width='3.75' stroke-linecap='round'/%3E%3Cpath d='M11 34L8.5 36.5' stroke='white' stroke-width='3.75' stroke-linecap='round'/%3E%3Ccircle cx='22.5' cy='22.5' r='3.75' fill='white'/%3E%3C/svg%3E");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    display: block;
-}
-
 /* Arrow icon for orange */
 .temp-icon.orange .temp-icon-inner::before {
     content: '';
@@ -343,26 +370,18 @@ body {
     transition: opacity 0s ease;
 }
 
-.coffee-frame-1 {
-    /* Keep coffee1 at original scale within coffee-machine container */
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    opacity: 1;
-    z-index: 0;
-}
-
+.coffee-frame-0,
+.coffee-frame-1,
 .coffee-frame-2,
 .coffee-frame-3,
 .coffee-frame-4,
 .coffee-frame-5,
-.coffee-frame-6 {
-    /* Scale coffee2-6 to cover the entire page */
+.coffee-frame-6,
+.coffee-frame-7,
+.coffee-frame-8 {
+    /* Scale coffee0-8 to cover the entire page */
     position: fixed;
-    top: 0;
+    top: 5%;
     left: 0;
     width: 100vw;
     height: 100vh;
@@ -371,11 +390,15 @@ body {
     z-index: 5;
 }
 
+.coffee-frame-0.active,
+.coffee-frame-1.active,
 .coffee-frame-2.active,
 .coffee-frame-3.active,
 .coffee-frame-4.active,
 .coffee-frame-5.active,
-.coffee-frame-6.active {
+.coffee-frame-6.active,
+.coffee-frame-7.active,
+.coffee-frame-8.active {
     opacity: 1 !important;
     z-index: 6;
 }
