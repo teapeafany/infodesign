@@ -381,8 +381,8 @@ body {
 .coffee-frame-8 {
     /* Scale coffee0-8 to cover the entire page */
     position: fixed;
-    top: 5%;
-    left: 0;
+    top: 12%;
+    left: 2%;
     width: 100vw;
     height: 100vh;
     object-fit: cover;
@@ -399,6 +399,45 @@ body {
 .coffee-frame-6.active,
 .coffee-frame-7.active,
 .coffee-frame-8.active {
+    opacity: 1 !important;
+    z-index: 6;
+}
+
+/* Chatter animation frames - stacked on top of each other */
+.chatter-frame {
+    transition: opacity 0.1s ease;
+    pointer-events: none;
+}
+
+.chatter-frame.active {
+    transition: opacity 0s ease;
+}
+
+.chatter-frame-0,
+.chatter-frame-1,
+.chatter-frame-2,
+.chatter-frame-3,
+.chatter-frame-4,
+.chatter-frame-5,
+.chatter-frame-6 {
+    /* Scale chatter0-6 to cover the entire page */
+    position: fixed;
+    top: 5%;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    opacity: 0;
+    z-index: 5;
+}
+
+.chatter-frame-0.active,
+.chatter-frame-1.active,
+.chatter-frame-2.active,
+.chatter-frame-3.active,
+.chatter-frame-4.active,
+.chatter-frame-5.active,
+.chatter-frame-6.active {
     opacity: 1 !important;
     z-index: 6;
 }

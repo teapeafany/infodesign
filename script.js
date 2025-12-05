@@ -8,8 +8,14 @@ let coffeeAnimationInterval = null;
 const coffeeFrames = 9; // coffee0.png through coffee8.png
 const coffeeAnimationSpeed = 250; // milliseconds per frame
 
+// Chatter animation variables
+let chatterAnimationFrame = 0;
+let chatterAnimationInterval = null;
+const chatterFrames = 7; // chatter0.png through chatter6.png
+const chatterAnimationSpeed = 300; // milliseconds per frame
+
 // Mapping of location/time combinations to specific coffee frames
-const locationTimeFrameMap = {
+const locationTimeCoffeeFrameMap = {
     'Kaldis': {
         15: 6,  // 3pm - coffee6
         13: 8,  // 1pm - coffee8
@@ -22,17 +28,55 @@ const locationTimeFrameMap = {
     }
 };
 
+// Mapping of location/time combinations to specific chatter frames
+const locationTimeChatterFrameMap = {
+    'Kaldis': {
+        17: 5   // 5pm - chatter5
+    },
+    'Blue Donkey': {
+        10: 3,  // 10am - chatter3
+        12: 4,  // 12pm - chatter4
+        14: 6   // 2pm - chatter6
+    },
+    'PG3': {
+        10: 4,  // 10am - chatter4
+        11: 3,  // 11am - chatter3
+        12: 0,  // 12pm - chatter0
+        13: 1,  // 1pm - chatter1
+        14: 2,  // 2pm - chatter2
+        15: 2,  // 3pm - chatter2
+        16: 3,  // 4pm - chatter3
+        17: 4,  // 5pm - chatter4
+        18: 4   // 6pm - chatter4
+    }
+};
+
 // Mapping of location/time combinations to decibel values
 const locationTimeDecibelMap = {
     'Kaldis': {
         15: 68.4,  // 3pm - 68.4 DB
         13: 84.7,  // 1pm - 84.7 DB
-        12: 63.6   // 12pm - 63.6 DB
+        12: 63.6,  // 12pm - 63.6 DB
+        17: 70.4   // 5pm - 70.4 DB
     },
     'Blue Donkey': {
         16: 58,    // 4pm - 58 DB
         15: 55,    // 3pm - 55 DB
-        13: 68.6   // 1pm - 68.6 DB
+        13: 68.6,  // 1pm - 68.6 DB
+        10: 60.1,  // 10am - 60.1 DB
+        12: 62.4,  // 12pm - 62.4 DB
+        14: 75.8   // 2pm - 75.8 DB
+    },
+    'PG3': {
+        10: 60.1,  // 10am - 60.1 DB
+        11: 59.1,  // 11am - 59.1 DB
+        12: 48,    // 12pm - 48 DB
+        13: 51,    // 1pm - 51 DB
+        14: 57.7,  // 2pm - 57.7 DB
+        15: 57.6,  // 3pm - 57.6 DB
+        16: 59.9,  // 4pm - 59.9 DB
+        17: 63.2,  // 5pm - 63.2 DB
+        18: 62.3   // 6pm - 62.3 DB
     }
 };
 
@@ -76,11 +120,11 @@ function startCoffeeAnimation() {
         }
         
         // Show current frame
-        const currentFrame = document.getElementById(`coffeeFrame${coffeeAnimationFrame}`);
-        if (currentFrame) {
-            currentFrame.classList.add('active');
-            // Force immediate opacity update
-            currentFrame.style.opacity = '1';
+            const currentFrame = document.getElementById(`coffeeFrame${coffeeAnimationFrame}`);
+            if (currentFrame) {
+                currentFrame.classList.add('active');
+                // Force immediate opacity update
+                currentFrame.style.opacity = '1';
         }
     };
     
@@ -100,19 +144,13 @@ function stopCoffeeAnimation() {
         clearInterval(coffeeAnimationInterval);
         coffeeAnimationInterval = null;
     }
-    // Reset to first frame - show only coffee0
+    // Hide all coffee frames
     for (let i = 0; i < coffeeFrames; i++) {
         const frame = document.getElementById(`coffeeFrame${i}`);
         if (frame) {
             frame.classList.remove('active');
             frame.style.opacity = '0';
         }
-    }
-    // Show coffee0
-    const frame0 = document.getElementById('coffeeFrame0');
-    if (frame0) {
-        frame0.classList.add('active');
-        frame0.style.opacity = '1';
     }
     coffeeAnimationFrame = 0;
 }
@@ -178,6 +216,83 @@ function showCoffeeFrame(frameNumber) {
     coffeeAnimationInterval = setTimeout(animateToFrame, coffeeAnimationSpeed);
 }
 
+function stopChatterAnimation() {
+    if (chatterAnimationInterval) {
+        clearInterval(chatterAnimationInterval);
+        chatterAnimationInterval = null;
+    }
+    // Hide all chatter frames
+    for (let i = 0; i < chatterFrames; i++) {
+        const frame = document.getElementById(`chatterFrame${i}`);
+        if (frame) {
+            frame.classList.remove('active');
+            frame.style.opacity = '0';
+        }
+    }
+    chatterAnimationFrame = 0;
+}
+
+// Show a specific chatter frame based on location and time
+// Animates from chatter0 up to the target frame, then resets to chatter0 in a continuous loop
+function showChatterFrame(frameNumber) {
+    // Stop any running animation
+    if (chatterAnimationInterval) {
+        clearInterval(chatterAnimationInterval);
+        chatterAnimationInterval = null;
+    }
+    
+    // Store target frame for looping
+    let targetFrame = frameNumber;
+    const frame0 = document.getElementById('chatterFrame0');
+    
+    // Initialize: clear all frames and show frame 0
+    const resetToStart = () => {
+        for (let i = 0; i < chatterFrames; i++) {
+            const frame = document.getElementById(`chatterFrame${i}`);
+            if (frame) {
+                frame.classList.remove('active');
+                frame.style.opacity = '0';
+            }
+        }
+        chatterAnimationFrame = 0;
+        if (frame0) {
+            frame0.classList.add('active');
+            frame0.style.opacity = '1';
+        }
+    };
+    
+    resetToStart();
+    
+    // Animate from 0 to target frame, then loop
+    const animateToFrame = () => {
+        chatterAnimationFrame++;
+        
+        if (chatterAnimationFrame <= targetFrame) {
+            // Show current frame
+            const currentFrame = document.getElementById(`chatterFrame${chatterAnimationFrame}`);
+            if (currentFrame) {
+                currentFrame.classList.add('active');
+                currentFrame.style.opacity = '1';
+            }
+            
+            // Continue animating if not at target yet
+            if (chatterAnimationFrame < targetFrame) {
+                chatterAnimationInterval = setTimeout(animateToFrame, chatterAnimationSpeed);
+            } else {
+                // Reached target frame, now reset to 0 after a brief pause, then loop
+                chatterAnimationInterval = setTimeout(() => {
+                    resetToStart();
+                    // Start the loop again
+                    chatterAnimationInterval = setTimeout(animateToFrame, chatterAnimationSpeed);
+                }, chatterAnimationSpeed);
+            }
+        }
+    };
+    
+    // Start animation after a brief delay
+    chatterAnimationInterval = setTimeout(animateToFrame, chatterAnimationSpeed);
+}
+
 // Update decibel number display
 function updateDecibelNumber() {
     const decibelElement = document.getElementById('decibelNumber');
@@ -200,23 +315,37 @@ function updateDecibelNumber() {
 function updateTimeBasedElements() {
     const coffeeMachine = document.querySelector('.coffee-machine');
     
-    // Check if there's a specific frame for this location/time combination
-    const locationMap = locationTimeFrameMap[selectedLocation];
-    const targetFrame = locationMap && locationMap[selectedTime];
+    // Check if there's a coffee frame for this location/time combination
+    const coffeeLocationMap = locationTimeCoffeeFrameMap[selectedLocation];
+    const coffeeTargetFrame = coffeeLocationMap && coffeeLocationMap[selectedTime];
+    
+    // Check if there's a chatter frame for this location/time combination
+    const chatterLocationMap = locationTimeChatterFrameMap[selectedLocation];
+    const chatterTargetFrame = chatterLocationMap && chatterLocationMap[selectedTime];
     
     // Update decibel number
     updateDecibelNumber();
     
-    if (targetFrame !== undefined) {
-        // Show the specific frame for this location/time combination
-        showCoffeeFrame(targetFrame);
+    // Always stop both animations first to ensure only one shows
+    stopCoffeeAnimation();
+    stopChatterAnimation();
+    
+    if (coffeeTargetFrame !== undefined) {
+        // Show coffee animation only
+        showCoffeeFrame(coffeeTargetFrame);
         if (coffeeMachine) {
             coffeeMachine.classList.add('active');
             coffeeMachine.style.opacity = '1';
         }
+    } else if (chatterTargetFrame !== undefined) {
+        // Show chatter animation only
+        showChatterFrame(chatterTargetFrame);
+        if (coffeeMachine) {
+            coffeeMachine.classList.remove('active');
+            coffeeMachine.style.opacity = '0.22';
+        }
     } else {
-        // No specific frame for this combination: show default (coffee0)
-        stopCoffeeAnimation();
+        // No specific frame for this combination: everything is already hidden
         if (coffeeMachine) {
             coffeeMachine.classList.remove('active');
             coffeeMachine.style.opacity = '0.22';
@@ -315,11 +444,11 @@ interactiveElements.forEach(element => {
     });
 
     element.addEventListener('mouseenter', function() {
-        this.style.opacity = '0.8';
+            this.style.opacity = '0.8';
     });
 
     element.addEventListener('mouseleave', function() {
-        this.style.opacity = '1';
+            this.style.opacity = '1';
     });
 });
 
