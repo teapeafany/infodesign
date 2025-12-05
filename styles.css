@@ -159,7 +159,7 @@ body {
 /* Sound Text */
 .sound-text {
     position: fixed;
-    top: calc(50% - 300px);
+    top: calc(50% - 350px);
     left: 50%;
     transform: translate(-50%, -50%);
     font-family: 'Inter', 'Arial', sans-serif;
@@ -438,6 +438,44 @@ body {
 .chatter-frame-4.active,
 .chatter-frame-5.active,
 .chatter-frame-6.active {
+    opacity: 1 !important;
+    z-index: 6;
+}
+
+/* Music animation frames - stacked on top of each other */
+.music-frame {
+    transition: opacity 0.1s ease;
+    pointer-events: none;
+}
+
+.music-frame.active {
+    transition: opacity 0s ease;
+}
+
+.music-frame-0,
+.music-frame-1,
+.music-frame-2,
+.music-frame-3,
+.music-frame-4,
+.music-frame-5 {
+    /* Scale music0-5 to cover the entire page */
+    position: fixed;
+    top: 5%;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    opacity: 0;
+    z-index: 5;
+    transform: scale(0.95);
+}
+
+.music-frame-0.active,
+.music-frame-1.active,
+.music-frame-2.active,
+.music-frame-3.active,
+.music-frame-4.active,
+.music-frame-5.active {
     opacity: 1 !important;
     z-index: 6;
 }

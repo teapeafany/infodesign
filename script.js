@@ -14,6 +14,12 @@ let chatterAnimationInterval = null;
 const chatterFrames = 7; // chatter0.png through chatter6.png
 const chatterAnimationSpeed = 300; // milliseconds per frame
 
+// Music animation variables
+let musicAnimationFrame = 0;
+let musicAnimationInterval = null;
+const musicFrames = 6; // music0.png through music5.png
+const musicAnimationSpeed = 250; // milliseconds per frame
+
 // Mapping of location/time combinations to specific coffee frames
 const locationTimeCoffeeFrameMap = {
     'Kaldis': {
@@ -51,13 +57,34 @@ const locationTimeChatterFrameMap = {
     }
 };
 
+// Mapping of location/time combinations to specific music frames
+const locationTimeMusicFrameMap = {
+    'Kaldis': {
+        10: 2,  // 10am - music2
+        11: 2,  // 11am - music2
+        14: 5,  // 2pm - music5
+        16: 5,  // 4pm - music5
+        18: 2   // 6pm - music2
+    },
+    'Blue Donkey': {
+        11: 4,  // 11am - music4
+        17: 0,  // 5pm - music0
+        18: 3   // 6pm - music3
+    }
+};
+
 // Mapping of location/time combinations to decibel values
 const locationTimeDecibelMap = {
     'Kaldis': {
         15: 68.4,  // 3pm - 68.4 DB
         13: 84.7,  // 1pm - 84.7 DB
         12: 63.6,  // 12pm - 63.6 DB
-        17: 70.4   // 5pm - 70.4 DB
+        17: 70.4,  // 5pm - 70.4 DB
+        10: 55.9,  // 10am - 55.9 DB
+        11: 58.2,  // 11am - 58.2 DB
+        14: 66.3,  // 2pm - 66.3 DB
+        16: 71,    // 4pm - 71 DB
+        18: 59.1   // 6pm - 59.1 DB
     },
     'Blue Donkey': {
         16: 58,    // 4pm - 58 DB
@@ -65,7 +92,10 @@ const locationTimeDecibelMap = {
         13: 68.6,  // 1pm - 68.6 DB
         10: 60.1,  // 10am - 60.1 DB
         12: 62.4,  // 12pm - 62.4 DB
-        14: 75.8   // 2pm - 75.8 DB
+        14: 75.8,  // 2pm - 75.8 DB
+        11: 68,    // 11am - 68 DB
+        17: 45.1,  // 5pm - 45.1 DB
+        18: 62.2   // 6pm - 62.2 DB
     },
     'PG3': {
         10: 60.1,  // 10am - 60.1 DB
@@ -293,6 +323,83 @@ function showChatterFrame(frameNumber) {
     chatterAnimationInterval = setTimeout(animateToFrame, chatterAnimationSpeed);
 }
 
+function stopMusicAnimation() {
+    if (musicAnimationInterval) {
+        clearInterval(musicAnimationInterval);
+        musicAnimationInterval = null;
+    }
+    // Hide all music frames
+    for (let i = 0; i < musicFrames; i++) {
+        const frame = document.getElementById(`musicFrame${i}`);
+        if (frame) {
+            frame.classList.remove('active');
+            frame.style.opacity = '0';
+        }
+    }
+    musicAnimationFrame = 0;
+}
+
+// Show a specific music frame based on location and time
+// Animates from music0 up to the target frame, then resets to music0 in a continuous loop
+function showMusicFrame(frameNumber) {
+    // Stop any running animation
+    if (musicAnimationInterval) {
+        clearInterval(musicAnimationInterval);
+        musicAnimationInterval = null;
+    }
+    
+    // Store target frame for looping
+    let targetFrame = frameNumber;
+    const frame0 = document.getElementById('musicFrame0');
+    
+    // Initialize: clear all frames and show frame 0
+    const resetToStart = () => {
+        for (let i = 0; i < musicFrames; i++) {
+            const frame = document.getElementById(`musicFrame${i}`);
+            if (frame) {
+                frame.classList.remove('active');
+                frame.style.opacity = '0';
+            }
+        }
+        musicAnimationFrame = 0;
+        if (frame0) {
+            frame0.classList.add('active');
+            frame0.style.opacity = '1';
+        }
+    };
+    
+    resetToStart();
+    
+    // Animate from 0 to target frame, then loop
+    const animateToFrame = () => {
+        musicAnimationFrame++;
+        
+        if (musicAnimationFrame <= targetFrame) {
+            // Show current frame
+            const currentFrame = document.getElementById(`musicFrame${musicAnimationFrame}`);
+            if (currentFrame) {
+                currentFrame.classList.add('active');
+                currentFrame.style.opacity = '1';
+            }
+            
+            // Continue animating if not at target yet
+            if (musicAnimationFrame < targetFrame) {
+                musicAnimationInterval = setTimeout(animateToFrame, musicAnimationSpeed);
+            } else {
+                // Reached target frame, now reset to 0 after a brief pause, then loop
+                musicAnimationInterval = setTimeout(() => {
+                    resetToStart();
+                    // Start the loop again
+                    musicAnimationInterval = setTimeout(animateToFrame, musicAnimationSpeed);
+                }, musicAnimationSpeed);
+            }
+        }
+    };
+    
+    // Start animation after a brief delay
+    musicAnimationInterval = setTimeout(animateToFrame, musicAnimationSpeed);
+}
+
 // Update decibel number display
 function updateDecibelNumber() {
     const decibelElement = document.getElementById('decibelNumber');
@@ -323,12 +430,17 @@ function updateTimeBasedElements() {
     const chatterLocationMap = locationTimeChatterFrameMap[selectedLocation];
     const chatterTargetFrame = chatterLocationMap && chatterLocationMap[selectedTime];
     
+    // Check if there's a music frame for this location/time combination
+    const musicLocationMap = locationTimeMusicFrameMap[selectedLocation];
+    const musicTargetFrame = musicLocationMap && musicLocationMap[selectedTime];
+    
     // Update decibel number
     updateDecibelNumber();
     
-    // Always stop both animations first to ensure only one shows
+    // Always stop all animations first to ensure only one shows
     stopCoffeeAnimation();
     stopChatterAnimation();
+    stopMusicAnimation();
     
     if (coffeeTargetFrame !== undefined) {
         // Show coffee animation only
@@ -340,6 +452,13 @@ function updateTimeBasedElements() {
     } else if (chatterTargetFrame !== undefined) {
         // Show chatter animation only
         showChatterFrame(chatterTargetFrame);
+        if (coffeeMachine) {
+            coffeeMachine.classList.remove('active');
+            coffeeMachine.style.opacity = '0.22';
+        }
+    } else if (musicTargetFrame !== undefined) {
+        // Show music animation only
+        showMusicFrame(musicTargetFrame);
         if (coffeeMachine) {
             coffeeMachine.classList.remove('active');
             coffeeMachine.style.opacity = '0.22';
